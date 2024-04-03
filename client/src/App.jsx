@@ -7,6 +7,8 @@ import Nav from "./components/Nav"
 import More from "./pages/More"
 import Market from "./pages/Market"
 import MyStore from "./pages/MyStore"
+import PrivateRoute from "./components/PrivateRoute"
+import Dashboard from "./pages/Dashboard"
 
 function App() {
   return (
@@ -18,8 +20,11 @@ function App() {
           <Route path="/sign-up" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/more" element={<More />} />
-          <Route path="/market" element={<Market />} />
-          <Route path="/my-store" element={<MyStore />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/market" element={<Market />} />
+            <Route path="/my-store" element={<MyStore />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
         </Routes>
         <div className=" sticky bottom-0 md:max-w-3xl md:mx-auto md:shadow-md md:p-3">
           <Nav />
