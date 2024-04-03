@@ -2,7 +2,7 @@ import { Alert, Button, TextInput } from "flowbite-react"
 import image1 from "../assets/coconut-removebg-preview.png"
 import { useState } from "react"
 import axios from 'axios'
-import {useNavigate} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 
 const Signup = () => {
 
@@ -67,6 +67,12 @@ const Signup = () => {
           }
           <Button type="submit">Submit</Button>
         </form>
+        <div className=" flex gap-2">
+          <p className=" text-gray-700">Already have an account? </p>
+          <Link to={'/login'} className=" text-blue-500 hover:underline">
+            Log in
+          </Link>
+        </div>
       </div>
     </div>
   )
