@@ -5,6 +5,8 @@ import Home from "./pages/Home"
 import Header from "./components/Header"
 import Nav from "./components/Nav"
 import More from "./pages/More"
+import Market from "./pages/Market"
+import MyStore from "./pages/MyStore"
 
 function App() {
   return (
@@ -16,8 +18,12 @@ function App() {
           <Route path="/sign-up" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/more" element={<More />} />
+          <Route path="/market" element={<Market />} />
+          <Route path="/my-store" element={<MyStore />} />
         </Routes>
-        <Nav />
+        <div className=" sticky bottom-0 md:max-w-3xl md:mx-auto md:shadow-md md:p-3">
+          <Nav />
+        </div>
       </Router>
     </>
   )

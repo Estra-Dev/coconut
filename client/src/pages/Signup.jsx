@@ -3,6 +3,7 @@ import image1 from "../assets/coconut-removebg-preview.png"
 import { useState } from "react"
 import axios from 'axios'
 import {Link, useNavigate} from "react-router-dom"
+import OAuth from "../components/OAuth"
 
 const Signup = () => {
 
@@ -65,7 +66,8 @@ const Signup = () => {
               <Alert color={'failure'} className=" mt-3">{ errorMsg }</Alert>
             )
           }
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Sign up</Button>
+          <OAuth />
         </form>
         <div className=" flex gap-2">
           <p className=" text-gray-700">Already have an account? </p>

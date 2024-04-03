@@ -5,6 +5,7 @@ import axios from 'axios'
 import { Link, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { loginStart, loginSuccess, loginFailure } from "../redux/user/userSlice"
+import OAuth from "../components/OAuth"
 
 
 const Login = () => {
@@ -70,6 +71,7 @@ const Login = () => {
               <span>Loading</span>
             </>) : "Log in"
           }</Button>
+          <OAuth />
         </form>
         <div className=" flex gap-2">
           <p className=" text-gray-700">Dont have an account? </p>
