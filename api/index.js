@@ -8,12 +8,28 @@ dotenv.config();
 const app = express();
 const PORT = 3000 || process.env.PORT;
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: ["http://localhost:5173"],
+  })
+);
 app.use(express.json());
 app.use("/user", userRouter);
 
 app.get("/", (req, res) => {
   res.json("Welcome to the coconut app");
+});
+
+// middleware to handle errors
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal server error";
+  res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message,
+  });
 });
 
 try {
@@ -27,14 +43,3 @@ try {
 } catch (error) {
   console.log(error);
 }
-
-// middleware to handle errors
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal server error";
-  res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
-});
