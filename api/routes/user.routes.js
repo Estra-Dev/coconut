@@ -1,10 +1,9 @@
 import express from "express";
-import { google, login, signUp } from "../controllers/user.controllers.js";
+import { updateUser } from "../controllers/user.controllers.js";
+import { verifyToken } from "../utils/verifyToken.js";
 
 const router = express.Router();
 
-router.post("/signup", signUp);
-router.post("/login", login);
-router.post("/google", google);
+router.put("/update/:userId", verifyToken, updateUser);
 
 export default router;

@@ -29,7 +29,7 @@ const Signup = () => {
     setError(false)
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/user/signup`, details)
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/signup`, details)
       console.log(res)
 
       if (res.status === 201) {

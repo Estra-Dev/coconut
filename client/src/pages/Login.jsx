@@ -30,7 +30,7 @@ const Login = () => {
     dispatch(loginStart())
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/user/login`, details, {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/login`, details, {
         headers: {"Content-Type": "application/json"},
         withCredentials: true
       })
