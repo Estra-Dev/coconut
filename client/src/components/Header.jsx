@@ -15,7 +15,7 @@ const Header = () => {
   }
 
   return (
-    <Navbar className=' border-b-2 px-6 sticky top-0'>
+    <Navbar className=' border-b-2 px-6 sticky top-0 z-50'>
       <Link to={'/'} className=' flex justify-center gap-1 items-center'>
         <span className=' font-semibold shadow-md text-gray-800 dark:text-gray-200 px-2'>coconut</span>
         <img src={image1} className=' w-8 h-8' alt="logo" />
@@ -28,9 +28,11 @@ const Header = () => {
                 <span className=' block text-sm'>{ currentUser.username }</span>
                 <span className=' block text-sm font-medium'>{ currentUser.email }</span>
               </Dropdown.Header>
-              <Dropdown.Item>
-                <Link to={'/dashboard?tab=profile'}>Profile</Link>
-              </Dropdown.Item>
+              <Link to={'/dashboard?tab=profile'}>
+                <Dropdown.Item>
+                  Profile
+                </Dropdown.Item>  
+              </Link>
               <Dropdown.Divider />
               <Dropdown.Item>Sign Out</Dropdown.Item>
             </Dropdown>
