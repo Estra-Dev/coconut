@@ -48,8 +48,8 @@ const Login = () => {
 
   return (
     <div className=" min-h-screen flex flex-col justify-center items-center">
-      <div className=" flex flex-col justify-center items-center gap-3 max-w-3xl w-full bg-white mx-auto py-7 px-10 rounded-md shadow-md ">
-        <h1 className=" font-semibold text-gray-800 shadow-md px-3">Log in to your coconut Account</h1>
+      <div className=" flex flex-col justify-center items-center gap-3 max-w-3xl w-full mx-auto py-7 px-10 rounded-md shadow-md ">
+        <h1 className=" font-semibold shadow-md px-3">Log in to your coconut Account</h1>
         <img src={image1} className=" w-12 h-12" alt="logo" />
         <form className=" w-full flex flex-col gap-6 p-3 rounded-md shadow-lg" onSubmit={handleSubmit}>
           <div className="">
@@ -74,7 +74,7 @@ const Login = () => {
           <OAuth />
         </form>
         <div className=" flex gap-2">
-          <p className=" text-gray-700">Dont have an account? </p>
+          <p className=" ">Dont have an account? </p>
           <Link to={'/sign-up'} className=" text-blue-500 hover:underline">
             Sign up
           </Link>

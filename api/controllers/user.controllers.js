@@ -57,7 +57,7 @@ export const updateUser = async (req, res, next) => {
         $set: {
           username: req.body.username,
           password: req.body.newpassword,
-          photoUrl: validUser.googlePhotoUrl,
+          photoUrl: req.body.googlePhotoUrl,
         },
       },
       { new: true }
@@ -65,6 +65,17 @@ export const updateUser = async (req, res, next) => {
 
     const { password, ...rest } = updatedUser._doc;
     res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const signOut = (req, res, next) => {
+  try {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .json("You have successfully signed out");
   } catch (error) {
     next(error);
   }

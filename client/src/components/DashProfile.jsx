@@ -6,6 +6,10 @@ import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/st
 import { app } from "../firebase";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { updateStart, updateSuccess, updateFailure, signoutSuccess } from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
+import axios from 'axios'
+import { useNavigate } from "react-router-dom";
 
 const DashProfile = () => {
 
@@ -15,7 +19,10 @@ const DashProfile = () => {
   const [imageFileUrl, setImageFileUrl] = useState(null)
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null)
   const [imageFileUploadError, setImageFileUploadError] = useState(null)
+  const [formData, setFormData] = useState({})
   const filePicker = useRef()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   console.log(imageFileUploadProgress, imageFileUploadError)
 
@@ -71,16 +78,58 @@ const DashProfile = () => {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then(downloadUrl => {
           setImageFileUrl(downloadUrl)
+          setFormData({...formData, googlePhotoUrl: downloadUrl})
         })
       }
     )
+  }
+
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]:e.target.value})
+  }
+  console.log(formData)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    if (Object.keys(formData).length === 0) {
+      return
+    }
+    
+    try {
+      dispatch(updateStart())
+      const res = await axios.put(`${import.meta.env.VITE_SERVER_URL}/user/update/${currentUser._id}`, formData, {
+        withCredentials: true
+      })
+
+      console.log(res)
+      if (res.status === 200) {
+        dispatch(updateSuccess(res.data))
+      }
+    } catch (error) {
+      dispatch(updateFailure(error.response.data.message))
+    }
+  }
+
+  const handleSignOut = async () => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/user/signout`)
+      if (res.status === 200) {
+        dispatch(signoutSuccess())
+        navigate('/login')
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
     <div className=" max-w-lg mx-auto w-full p-3">
       <h1 className=" py-7 text-center text-3xl font-semibold">Personal Info</h1>
       <div className=" flex flex-col">
-        <div className=" w-32 h-32 self-center shadow-md rounded-full relative" onClick={() => filePicker.current.click()}>
+        <div className=" w-32 h-32 self-center shadow-md rounded-full relative" onClick={() => {
+          edit && filePicker.current.click()
+        }}>
           {
             imageFileUploadProgress && (
 
@@ -111,24 +160,24 @@ const DashProfile = () => {
             <Alert color={'failure'} className=" mt-3">{ imageFileUploadError }</Alert>
           )
         }
-        <Button className=" w-32 self-center my-6" outline>Sign Out</Button>
+        <Button className=" w-32 self-center my-6" outline onClick={handleSignOut}>Sign Out</Button>
         {
           edit ? (
-            <form className=" flex flex-col gap-3 p-3 shadow-md rounded-md">
+            <form className=" flex flex-col gap-3 p-3 shadow-md rounded-md" onSubmit={handleSubmit}>
               <TextInput type="file" accept="images/*" onChange={handleImageChange} ref={filePicker} className=" hidden" />
               <div className="">
                 <label htmlFor="username">Username</label>
-                <TextInput type="text" name="username" placeholder="Enter username" defaultValue={currentUser.username} />
+                <TextInput type="text" name="username" placeholder="Enter username" defaultValue={currentUser.username} onChange={handleChange} />
               </div>
               <div className="">
                 <label htmlFor="oldpassword">Old Password</label>
-                <TextInput type="password" name="oldpassword" placeholder="Enter old password" />
+                <TextInput type="password" name="oldpassword" placeholder="Enter old password" onChange={handleChange} />
               </div>
               <div className="">
                 <label htmlFor="newpassword">New Password</label>
-                <TextInput type="password" name="newpassword" placeholder="Enter new password" />
+                <TextInput type="password" name="newpassword" placeholder="Enter new password" onChange={handleChange} />
               </div>
-              <Button gradientDuoTone={'greenToBlue'} className=" mt-4">Update</Button>
+              <Button type="submit" gradientDuoTone={'greenToBlue'} className=" mt-4">Update</Button>
             </form>
           ) : (
             <div className=" flex flex-col gap-6">
@@ -140,6 +189,14 @@ const DashProfile = () => {
                 <span className=" text-xs font-thin">Email</span>
                 <p className=" text-sm font-semibold">{ currentUser.email }</p>
               </div>
+              {
+                  currentUser.generatedPassword && (
+                    <div className=" p-4 border-b-[1px] border-[lightgray] dark:border-[#d3d3d354]">
+                      <span className=" text-xs font-thin">This is a generated password for this account, for security purpose kindly update your password, copy and paste as old password ASAP.</span>
+                      <p className=" text-sm font-semibold">{ currentUser.password }</p>
+                    </div>
+                )    
+              }  
               <div className=" p-4 border-b-[1px] border-[lightgray] dark:border-[#d3d3d354]">
                 <span className=" text-xs font-thin">Active since</span>
                 <p className=" text-sm font-semibold">{ new Date(currentUser.createdAt).toLocaleDateString() }</p>

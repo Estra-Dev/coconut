@@ -110,6 +110,7 @@ export const google = async (req, res, next) => {
           username.toLowerCase().split(" ").join("") +
           Math.random().toString(9).slice(-4),
         email,
+        // password: hashedPassword,
         password: hashedPassword,
         photoUrl: googlePhotoUrl,
       });
@@ -120,13 +121,13 @@ export const google = async (req, res, next) => {
         { id: newUser._id, isAdmin: newUser.isAdmin },
         process.env.SECRETE
       );
-      const { password, ...rest } = newUser._doc;
+      // const { password, ...rest } = newUser._doc;
       res
         .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
         })
-        .json(rest);
+        .json({ newUser, generatedPassword });
     }
   } catch (error) {
     next(error);
