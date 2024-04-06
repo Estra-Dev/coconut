@@ -20,6 +20,7 @@ const DashProfile = () => {
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null)
   const [imageFileUploadError, setImageFileUploadError] = useState(null)
   const [formData, setFormData] = useState({})
+  const [updated, setUpdated] = useState(false)
   const filePicker = useRef()
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -91,6 +92,7 @@ const DashProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setUpdated(false)
     
     if (Object.keys(formData).length === 0) {
       return
@@ -105,6 +107,8 @@ const DashProfile = () => {
       console.log(res)
       if (res.status === 200) {
         dispatch(updateSuccess(res.data))
+        setUpdated(true)
+        setFormData({...formData, newpassword: '', oldpassword: ''})
       }
     } catch (error) {
       dispatch(updateFailure(error.response.data.message))
@@ -178,6 +182,11 @@ const DashProfile = () => {
                 <TextInput type="password" name="newpassword" placeholder="Enter new password" onChange={handleChange} />
               </div>
               <Button type="submit" gradientDuoTone={'greenToBlue'} className=" mt-4">Update</Button>
+              {
+                updated && (
+                  <Alert color={'success'}>{ 'Your profile has been updated successfully' }</Alert>
+                )
+              }
             </form>
           ) : (
             <div className=" flex flex-col gap-6">

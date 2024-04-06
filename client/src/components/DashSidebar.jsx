@@ -3,11 +3,13 @@ import { useEffect, useState } from 'react'
 import {Link, useLocation} from 'react-router-dom'
 import { FaRegUserCircle } from "react-icons/fa";
 import { LiaSignOutAltSolid } from "react-icons/lia";
+import { useSelector } from 'react-redux';
 
 const DashSidebar = () => {
 
    const location = useLocation()
   const [tab, setTab] = useState('')
+  const {currentUser} = useSelector(state => state.user)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search)
@@ -22,7 +24,7 @@ const DashSidebar = () => {
     <Sidebar className=' w-full md:56'>
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item active={tab === 'profile'} icon={FaRegUserCircle} label="User" labelColor='dark' as='div'>
+          <Sidebar.Item active={tab === 'profile'} icon={FaRegUserCircle} label={currentUser.isAdmin ? "Admin" : "User"} labelColor='dark' as='div'>
             <Link to={'/dashboard?tab=profile'}>Profile</Link>
 
           </Sidebar.Item>

@@ -9,6 +9,8 @@ import Market from "./pages/Market"
 import MyStore from "./pages/MyStore"
 import PrivateRoute from "./components/PrivateRoute"
 import Dashboard from "./pages/Dashboard"
+import OnlyAdmin from "./components/OnlyAdmin"
+import GenerateAssets from "./pages/GenerateAssets"
 
 function App() {
   return (
@@ -24,6 +26,9 @@ function App() {
             <Route path="/market" element={<Market />} />
             <Route path="/my-store" element={<MyStore />} />
             <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+          <Route element={<OnlyAdmin />}>
+            <Route path="/generate-asset" element={<GenerateAssets />} />
           </Route>
         </Routes>
         <div className=" sticky bottom-0 md:max-w-3xl md:mx-auto md:shadow-md md:p-3">
