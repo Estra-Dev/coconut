@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
+import assetRouter from "./routes/asset.routes.js";
 
 dotenv.config();
 const app = express();
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
+app.use("/asset", assetRouter);
 
 app.get("/", (req, res) => {
   res.json("Welcome to the coconut app");
