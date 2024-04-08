@@ -6,6 +6,8 @@ import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/st
 import { app } from '../firebase';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import axios from 'axios'
+import {useNavigate} from 'react-router-dom'
 
 const GenerateAssets = () => {
 
@@ -14,6 +16,9 @@ const GenerateAssets = () => {
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(0)
   const [imageFileUploadError, setImageFileUploadError] = useState(null)
   const [formData, setFormData] = useState({})
+  const [generateError, setGenerateError] = useState(null)
+  const navigate = useNavigate()
+
 
   const handleImageChange = (ev) => {
     const file = ev.target.files[0]
@@ -27,6 +32,11 @@ const GenerateAssets = () => {
   console.log(imageFileUploadProgress, imageFileUploadError)
 
   const uploadImage = () => {
+    
+    setImageFile(null)
+    setImageFileUrl(null)
+    setFormData({})
+
     try {
       if (!imageFile) {
         return setImageFileUploadError("Asset image must be uploaded")
@@ -43,7 +53,7 @@ const GenerateAssets = () => {
           setImageFileUploadProgress(progress.toFixed(0))
         },
         (error) => {
-          setImageFileUploadError("Cannot upload file")
+          setImageFileUploadError("Cannot upload file", error)
           setImageFileUploadProgress(null)
         },
         () => {
@@ -65,7 +75,22 @@ const GenerateAssets = () => {
 
   const handleSubmit = async (ev) => {
     ev.preventDefault()
+    setGenerateError(null)
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/asset/generate`, formData, {
+        withCredentials: true
+      })
+      console.log(res)
+      if (res.status === 201) {
+        navigate('/my-store')
+      }
+    } catch (error) {
+      setGenerateError("Something went wrong", error.response.data.message)
+      console.log(error)
+    }
   }
+
+  console.log(formData)
 
   return (
     <div className=" min-h-screen max-w-2xl mx-auto">
@@ -74,11 +99,11 @@ const GenerateAssets = () => {
         <div className=" flex flex-col sm:flex-row gap-4 flex-1 justify-center sm:items-end">
           <div className=" flex flex-col gap-2">
             <label htmlFor="name">Name</label>
-            <TextInput placeholder='Asset name goes here' name='name' />
+            <TextInput placeholder='Asset name goes here' name='name' onChange={(ev) => setFormData({...formData, name: ev.target.value})} />
           </div>
           <div className=" flex flex-col gap-2">
             <label htmlFor="specie">Specie</label>
-            <Select>
+            <Select onChange={(ev) => setFormData({...formData, specie: ev.target.value})}>
               <option value={'king'}>King coconut</option>
               <option value={'chowghat'}>Chowghat Orange Dwarf</option>
               <option value={'greendwarf'}>Green Dwarf</option>
@@ -88,7 +113,7 @@ const GenerateAssets = () => {
           </div>
           <div className=" flex flex-col gap-2">
             <label htmlFor="stage">Stage</label>
-            <Select>
+            <Select onChange={(ev) => setFormData({...formData, stage: ev.target.value})}>
               <option value="beginner">Beginner</option>
               <option value="pie">Pie</option>
               <option value="pulp">Pulp</option>
@@ -97,7 +122,7 @@ const GenerateAssets = () => {
           </div>
           <div className=" flex flex-col gap-2">
             <label htmlFor="age">Age</label>
-            <Select>
+            <Select onChange={(ev) => setFormData({...formData, age: ev.target.value})}>
               <option value="0">0</option>
               <option value="25">25</option>
               <option value="50">50</option>
@@ -106,7 +131,7 @@ const GenerateAssets = () => {
           </div>
           <div className=" flex flex-col gap-2">
             <label htmlFor="value">Set Value</label>
-            <TextInput type='number' placeholder='0.00' name='value'/>
+            <TextInput type='number' placeholder='0.00' name='value' onChange={(ev) => setFormData({...formData, value: ev.target.value})}/>
           </div>
         </div>
         <div className=" flex items-center justify-between border-b-[1px] border-teal-500 py-2">
@@ -133,8 +158,13 @@ const GenerateAssets = () => {
             </div>
             )
           }
-        <ReactQuill required theme="snow" className=' h-72 mb-20' placeholder='Describe this asset...' />
+        <ReactQuill required theme="snow" className=' h-72 mb-20' placeholder='Describe this asset...' onChange={(value) => setFormData({...formData, description: value})} />
         <Button type='submit' gradientDuoTone={'greenToBlue'}>Generate Asset</Button>
+        {
+          generateError && (
+            <Alert color={'failure'}>{ generateError }</Alert>
+          ) 
+        }
       </form>
     </div>
   )
