@@ -9,6 +9,7 @@ const assetSchema = new Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     species: {
       type: String,
