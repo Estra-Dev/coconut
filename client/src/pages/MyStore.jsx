@@ -12,7 +12,7 @@ const MyStore = () => {
 
   useEffect(() => {
     getAssets()
-  }, [])
+  }, [currentUser._id])
 
   console.log(assets)
 
@@ -26,8 +26,19 @@ const MyStore = () => {
     }
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     console.log("Press delete")
+    try {
+      const res = await axios.delete(`${import.meta.env.VITE_SERVER_URL}/asset/deleteasset/${id}`, {
+        withCredentials: true
+      })
+      if (res.status === 200) {
+        setAssets(prev => prev.filter(asset => asset._id !== id))
+      }
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (

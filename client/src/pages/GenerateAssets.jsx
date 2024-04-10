@@ -103,7 +103,7 @@ const GenerateAssets = () => {
           </div>
           <div className=" flex flex-col gap-2">
             <label htmlFor="specie">Specie</label>
-            <Select onChange={(ev) => setFormData({...formData, specie: ev.target.value})}>
+            <Select onChange={(ev) => setFormData({...formData, species: ev.target.value})}>
               <option value={'king'}>King coconut</option>
               <option value={'chowghat'}>Chowghat Orange Dwarf</option>
               <option value={'greendwarf'}>Green Dwarf</option>

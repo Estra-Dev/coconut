@@ -42,7 +42,7 @@ const AssetCard = ({ asset, onDelete }) => {
               <div className=" flex justify-center gap-6">
                 <Button color={'gray'} onClick={() => setModal(false)}>No, cancel</Button>
                 <Button color={'failure'} onClick={() => { 
-                  onDelete()
+                  onDelete(asset._id)
                   setModal(false)
                 }}>Yes, Delete</Button>
               </div>

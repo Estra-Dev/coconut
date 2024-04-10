@@ -80,3 +80,16 @@ export const getAssets = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteAsset = async (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, "You are not allowed to delete this asset"));
+  }
+
+  try {
+    await Asset.findByIdAndDelete(req.params.assetId);
+    res.status(200).json("Asset deleted successfully");
+  } catch (error) {
+    next(error);
+  }
+};
