@@ -23,6 +23,14 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    ownedAssets: {
+      type: Array,
+      default: [],
+    },
+    numberOfAssets: {
+      type: Number,
+      default: 0,
+    },
     photoUrl: {
       type: String,
       default:

@@ -4,13 +4,12 @@ import {Button, Modal} from 'flowbite-react'
 import { useState } from "react";
 import { BsExclamationCircle } from "react-icons/bs";
 import { MdDeleteForever } from "react-icons/md";
+import {useSelector} from "react-redux"
 
 const AssetCard = ({ asset, onDelete }) => {
   
   const [modal, setModal] = useState(false)
-
-
-
+  const {currentUser} = useSelector(state => state.user)
 
   return (
     <div className=" h-[60px] md:h-[90px] max-w-[350px] w-full border border-teal-500/20 rounded-lg relative mb-5 overflow-hidden group flex shadow-md">
@@ -28,9 +27,14 @@ const AssetCard = ({ asset, onDelete }) => {
         <p className=" italic text-xs">{asset.age} { asset.age <= 1 ? 'day' : 'days' }</p>
         <p className=" italic text-xs flex items-center gap-1"> <span className=" text-green-500"><BsRocketFill /></span>#{ asset.value }</p>
       </div>
-      <div className=" text-white font-semibold top-[-200px] text-sm absolute group-hover:top-[50%] group-hover:left-[50%] group-hover:translate-x-[-50%] group-hover:translate-y-[-50%] w-[200px] text-center p-1 rounded-lg transition-all duration-300">
-        <Button className=" w-full" color={'red'} size={'xs'} onClick={() => setModal(true)}><MdDeleteForever className=" w-4 h-4" /> Delete</Button>
-      </div>
+      {
+        currentUser && currentUser.isAdmin && (
+
+          <div className=" text-white font-semibold top-[-200px] text-sm absolute group-hover:top-[50%] group-hover:left-[50%] group-hover:translate-x-[-50%] group-hover:translate-y-[-50%] w-[200px] text-center p-1 rounded-lg transition-all duration-300">
+            <Button className=" w-full" color={'red'} size={'xs'} onClick={() => setModal(true)}><MdDeleteForever className=" w-4 h-4" /> Delete</Button>
+          </div>
+        )
+      }
 
       {
         modal && (

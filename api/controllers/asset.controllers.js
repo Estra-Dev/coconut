@@ -1,4 +1,5 @@
 import Asset from "../model/asset.model.js";
+import User from "../model/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const generate = async (req, res, next) => {
@@ -13,7 +14,7 @@ export const generate = async (req, res, next) => {
     !req.body.description ||
     !req.body.image
   ) {
-    return next(errorHandler(403, "Please all fields are required"));
+    return next(errorHandler(403, "All fields are required"));
   }
 
   const slug =
@@ -38,7 +39,7 @@ export const generate = async (req, res, next) => {
 export const getAssets = async (req, res, next) => {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 9;
     const sortDirection = req.query.sortDirection === "asc" ? 1 : -1;
     const allAssets = await Asset.find({
       ...(req.query.userId && { userId: req.query.userId }),
@@ -89,6 +90,32 @@ export const deleteAsset = async (req, res, next) => {
   try {
     await Asset.findByIdAndDelete(req.params.assetId);
     res.status(200).json("Asset deleted successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMyAssets = async (req, res, next) => {
+  try {
+    const user = await User.findById();
+    if (req.user.id !== req.params.userId) {
+      return next(errorHandler(403, "cannot get"));
+    }
+
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.sortDirection === "asc" ? 1 : -1;
+
+    const assets = await Asset.find({ userId: req.params.userId })
+      .sort({ updatedAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+    // const totalAssets = user.ownedAssets.length;
+    const totalAssetsValue = assets.reduce((acc, obj) => {
+      return acc + obj.value;
+    }, 0);
+
+    res.status(200).json({ assets, totalAssetsValue });
   } catch (error) {
     next(error);
   }

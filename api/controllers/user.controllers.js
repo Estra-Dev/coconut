@@ -1,3 +1,4 @@
+import Asset from "../model/asset.model.js";
 import User from "../model/user.model.js";
 import { errorHandler } from "../utils/error.js";
 import bcryptjs from "bcryptjs";
@@ -76,6 +77,41 @@ export const signOut = (req, res, next) => {
       .clearCookie("access_token")
       .status(200)
       .json("You have successfully signed out");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateWithAssets = async (req, res, next) => {
+  try {
+    const asset = await Asset.findById(req.params.assetId);
+    const user = await User.findById(req.params.userId);
+
+    const assetIndex = user.ownedAssets.indexOf(req.params.assetId);
+    if (assetIndex === -1) {
+      user.ownedAssets.push(asset);
+      user.numberOfAssets = user.ownedAssets.length;
+    } else {
+      user.ownedAssets.filter((id) => id !== req.params.assetId);
+      user.numberOfAssets = user.ownedAssets.length;
+    }
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const getUer = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return next(errorHandler(404, "User not found"));
+    }
+
+    const { password, ...rest } = user._doc;
+    res.status(200).json(rest);
   } catch (error) {
     next(error);
   }

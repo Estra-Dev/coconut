@@ -12,15 +12,17 @@ const MyStore = () => {
 
   useEffect(() => {
     getAssets()
-  }, [currentUser._id])
+  }, [])
 
   console.log(assets)
 
   const getAssets = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/asset/getassets`)
-      console.log(res)
-      setAssets(res.data.allAssets)
+      const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/asset/${currentUser._id}`, {
+        withCredentials: true
+      })
+      console.log('my assets', res.data)
+      setAssets(res.data.assets)
     } catch (error) {
       console.log(error)
     }
@@ -53,14 +55,14 @@ const MyStore = () => {
         )
       }
       {
-        currentUser.isAdmin && (
+        assets.length === 0 ? (<h1 className=' text-3xl text-gray-500 font-bold text-center mt-10'>You do not have any asset yet</h1>) : (
 
         <div className=" max-w-6xl w-full mx-auto mt-3 p-5 flex flex-col md:flex-row flex-wrap gap-4 md:gap-6">
           {
-            assets.map(asset => (
-              <div key={asset._id} className=" md:w-[30%]">
-                <AssetCard asset={asset} onDelete={handleDelete} />
-              </div>
+              assets.map(asset => (
+                <div key={asset._id} className=" md:w-[30%]">
+                  <AssetCard asset={asset} onDelete={handleDelete} />
+                </div>
             ))
           }
         </div>

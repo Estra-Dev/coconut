@@ -1,5 +1,5 @@
 import {Alert, Button, FileInput, Select, TextInput} from 'flowbite-react'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage'
@@ -7,7 +7,9 @@ import { app } from '../firebase';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import axios from 'axios'
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateSuccess } from '../redux/user/userSlice';
 
 const GenerateAssets = () => {
 
@@ -17,8 +19,12 @@ const GenerateAssets = () => {
   const [imageFileUploadError, setImageFileUploadError] = useState(null)
   const [formData, setFormData] = useState({})
   const [generateError, setGenerateError] = useState(null)
+  const [newAssets, setNewAssets] = useState('')
+  const [updateUser, setUpdateUser] = useState([])
+  const [user, setUser] = useState([])
   const navigate = useNavigate()
-
+  const { currentUser } = useSelector(state => state.user)
+  const dispatch = useDispatch()
 
   const handleImageChange = (ev) => {
     const file = ev.target.files[0]
@@ -77,15 +83,51 @@ const GenerateAssets = () => {
     ev.preventDefault()
     setGenerateError(null)
     try {
-      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/asset/generate`, formData, {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/asset/generate/${currentUser._id}`, formData, {
         withCredentials: true
       })
       console.log(res)
       if (res.status === 201) {
-        navigate('/my-store')
+        setNewAssets(res.data)
+        // navigate('/my-store')
+        
       }
     } catch (error) {
       setGenerateError("Something went wrong", error.response.data.message)
+      console.log(error)
+    }
+  }
+
+  const getUser = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/user/${currentUser._id}`)
+      if (res.status === 200) {
+        setUser(res.data)
+        
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    if (newAssets) {
+      getUser()
+      updateUserWithAssets()
+    }
+  }, [newAssets])
+
+  const updateUserWithAssets = async () => {
+    try {
+      const res = await axios.put(`${import.meta.env.VITE_SERVER_URL}/user/updatewithassets/${currentUser._id}/${newAssets.userId}/${newAssets._id}`,{}, {
+        withCredentials: true
+      })
+      if (res.status === 200) {
+        dispatch(updateSuccess(res.data))
+      }
+      const updatedUser = res.data
+      console.log("updated user", updatedUser)
+    } catch (error) {
       console.log(error)
     }
   }
